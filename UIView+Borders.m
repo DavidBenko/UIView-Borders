@@ -6,14 +6,48 @@
 //
 
 #import "UIView+Borders.h"
+#import <objc/runtime.h>
 
+@interface UIView ()
+@property (nonatomic, strong) CALayer *topBorder;
+@property (nonatomic, strong) CALayer *bottomBorder;
+@property (nonatomic, strong) CALayer *leftBorder;
+@property (nonatomic, strong) CALayer *rightBorder;
+@end
 
 @implementation UIView(Borders)
 
-//////////
-// Top
-//////////
+#pragma mark - Properties
+-(CALayer *)topBorder {
+    return objc_getAssociatedObject(self, @selector(topBorder));
+}
 
+-(void)setTopBorder:(CALayer *)topBorder{
+    objc_setAssociatedObject(self, @selector(topBorder), topBorder, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+-(CALayer *)bottomBorder {
+    return objc_getAssociatedObject(self, @selector(bottomBorder));
+}
+
+-(void)setBottomBorder:(CALayer *)bottomBorder{
+    objc_setAssociatedObject(self, @selector(bottomBorder), bottomBorder, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+-(CALayer *)leftBorder {
+    return objc_getAssociatedObject(self, @selector(leftBorder));
+}
+
+-(void)setLeftBorder:(CALayer *)leftBorder{
+    objc_setAssociatedObject(self, @selector(leftBorder), leftBorder, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+-(CALayer *)rightBorder {
+    return objc_getAssociatedObject(self, @selector(rightBorder));
+}
+
+-(void)setRightBorder:(CALayer *)rightBorder{
+    objc_setAssociatedObject(self, @selector(rightBorder), rightBorder, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
+#pragma mark - Top
 -(CALayer*)createTopBorderWithHeight: (CGFloat)height andColor:(UIColor*)color{
     return [self getOneSidedBorderWithFrame:CGRectMake(0, 0, self.frame.size.width, height) andColor:color];
 }
@@ -23,18 +57,16 @@
 }
 
 -(void)addTopBorderWithHeight: (CGFloat)height andColor:(UIColor*)color{
-    [self addOneSidedBorderWithFrame:CGRectMake(0, 0, self.frame.size.width, height) andColor:color];
+    [self.topBorder removeFromSuperlayer];
+    self.topBorder = [self createTopBorderWithHeight:height andColor:color];
+    [self.layer addSublayer:self.topBorder];
 }
 
 -(void)addViewBackedTopBorderWithHeight: (CGFloat)height andColor:(UIColor*)color{
     [self addViewBackedOneSidedBorderWithFrame:CGRectMake(0, 0, self.frame.size.width, height) andColor:color];
 }
 
-
-//////////
-// Top + Offset
-//////////
-
+#pragma mark Top+Offset
 -(CALayer*)createTopBorderWithHeight: (CGFloat)height color:(UIColor*)color leftOffset:(CGFloat)leftOffset rightOffset:(CGFloat)rightOffset andTopOffset:(CGFloat)topOffset {
     // Subtract the bottomOffset from the height and the thickness to get our final y position.
     // Add a left offset to our x to get our x position.
@@ -58,11 +90,7 @@
     [self addViewBackedOneSidedBorderWithFrame:CGRectMake(0 + leftOffset, 0 + topOffset, self.frame.size.width - leftOffset - rightOffset, height) andColor:color];
 }
 
-
-//////////
-// Right
-//////////
-
+#pragma mark - Right
 -(CALayer*)createRightBorderWithWidth: (CGFloat)width andColor:(UIColor*)color{
     return [self getOneSidedBorderWithFrame:CGRectMake(self.frame.size.width-width, 0, width, self.frame.size.height) andColor:color];
 }
@@ -72,19 +100,16 @@
 }
 
 -(void)addRightBorderWithWidth: (CGFloat)width andColor:(UIColor*)color{
-    [self addOneSidedBorderWithFrame:CGRectMake(self.frame.size.width-width, 0, width, self.frame.size.height) andColor:color];
+    [self.rightBorder removeFromSuperlayer];
+    self.rightBorder = [self createRightBorderWithWidth:width andColor:color];
+    [self.layer addSublayer:self.topBorder];
 }
 
 -(void)addViewBackedRightBorderWithWidth: (CGFloat)width andColor:(UIColor*)color{
     [self addViewBackedOneSidedBorderWithFrame:CGRectMake(self.frame.size.width-width, 0, width, self.frame.size.height) andColor:color];
 }
 
-
-
-//////////
-// Right + Offset
-//////////
-
+#pragma mark Right+Offset
 -(CALayer*)createRightBorderWithWidth: (CGFloat)width color:(UIColor*)color rightOffset:(CGFloat)rightOffset topOffset:(CGFloat)topOffset andBottomOffset:(CGFloat)bottomOffset{
     
     // Subtract bottomOffset from the height to get our end.
@@ -108,11 +133,7 @@
     [self addViewBackedOneSidedBorderWithFrame:CGRectMake(self.frame.size.width-width-rightOffset, 0 + topOffset, width, self.frame.size.height - topOffset - bottomOffset) andColor:color];
 }
 
-
-//////////
-// Bottom
-//////////
-
+#pragma mark - Bottom
 -(CALayer*)createBottomBorderWithHeight: (CGFloat)height andColor:(UIColor*)color{
     return [self getOneSidedBorderWithFrame:CGRectMake(0, self.frame.size.height-height, self.frame.size.width, height) andColor:color];
 }
@@ -122,18 +143,16 @@
 }
 
 -(void)addBottomBorderWithHeight: (CGFloat)height andColor:(UIColor*)color{
-    [self addOneSidedBorderWithFrame:CGRectMake(0, self.frame.size.height-height, self.frame.size.width, height) andColor:color];
+    [self.bottomBorder removeFromSuperlayer];
+    self.bottomBorder = [self createBottomBorderWithHeight:height andColor:color];
+    [self.layer addSublayer:self.bottomBorder];
 }
 
 -(void)addViewBackedBottomBorderWithHeight: (CGFloat)height andColor:(UIColor*)color{
     [self addViewBackedOneSidedBorderWithFrame:CGRectMake(0, self.frame.size.height-height, self.frame.size.width, height) andColor:color];
 }
 
-
-//////////
-// Bottom + Offset
-//////////
-
+#pragma mark Bottom+Offset
 -(CALayer*)createBottomBorderWithHeight: (CGFloat)height color:(UIColor*)color leftOffset:(CGFloat)leftOffset rightOffset:(CGFloat)rightOffset andBottomOffset:(CGFloat)bottomOffset {
     // Subtract the bottomOffset from the height and the thickness to get our final y position.
     // Add a left offset to our x to get our x position.
@@ -156,12 +175,7 @@
     [self addViewBackedOneSidedBorderWithFrame:CGRectMake(0 + leftOffset, self.frame.size.height-height-bottomOffset, self.frame.size.width - leftOffset - rightOffset, height) andColor:color];
 }
 
-
-
-//////////
-// Left
-//////////
-
+#pragma mark - Left
 -(CALayer*)createLeftBorderWithWidth: (CGFloat)width andColor:(UIColor*)color{
     return [self getOneSidedBorderWithFrame:CGRectMake(0, 0, width, self.frame.size.height) andColor:color];
 }
@@ -173,21 +187,16 @@
 }
 
 -(void)addLeftBorderWithWidth: (CGFloat)width andColor:(UIColor*)color{
-    [self addOneSidedBorderWithFrame:CGRectMake(0, 0, width, self.frame.size.height) andColor:color];
+    [self.leftBorder removeFromSuperlayer];
+    self.leftBorder = [self createLeftBorderWithWidth:width andColor:color];
+    [self.layer addSublayer:self.leftBorder];
 }
-
-
 
 -(void)addViewBackedLeftBorderWithWidth: (CGFloat)width andColor:(UIColor*)color{
     [self addViewBackedOneSidedBorderWithFrame:CGRectMake(0, 0, width, self.frame.size.height) andColor:color];
 }
 
-
-
-//////////
-// Left + Offset
-//////////
-
+#pragma mark Left+Offset
 -(CALayer*)createLeftBorderWithWidth: (CGFloat)width color:(UIColor*)color leftOffset:(CGFloat)leftOffset topOffset:(CGFloat)topOffset andBottomOffset:(CGFloat)bottomOffset {
     return [self getOneSidedBorderWithFrame:CGRectMake(0 + leftOffset, 0 + topOffset, width, self.frame.size.height - topOffset - bottomOffset) andColor:color];
 }
@@ -209,12 +218,7 @@
     [self addViewBackedOneSidedBorderWithFrame:CGRectMake(0 + leftOffset, 0 + topOffset, width, self.frame.size.height - topOffset - bottomOffset) andColor:color];
 }
 
-
-
-//////////
-// Private: Our methods call these to add their borders.
-//////////
-
+#pragma mark - Private
 -(void)addOneSidedBorderWithFrame:(CGRect)frame andColor:(UIColor*)color
 {
     CALayer *border = [CALayer layer];
